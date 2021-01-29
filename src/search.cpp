@@ -919,6 +919,8 @@ namespace {
         bool ttPv = ss->ttPv;
         ss->ttPv = false;
 
+        const int probcutDepth = ss->ttHit ? depth : std::max(5, depth - 2);
+
         while (   (move = mp.next_move()) != MOVE_NONE
                && probCutCount < 2 + 2 * cutNode)
             if (move != excludedMove && pos.legal(move))
@@ -942,7 +944,7 @@ namespace {
 
                 // If the qsearch held, perform the regular search
                 if (value >= probCutBeta)
-                    value = -search<NonPV>(pos, ss+1, -probCutBeta, -probCutBeta+1, depth - 4, !cutNode);
+                    value = -search<NonPV>(pos, ss+1, -probCutBeta, -probCutBeta+1, probcutDepth - 4, !cutNode);
 
                 pos.undo_move(move);
 
@@ -954,7 +956,7 @@ namespace {
                        && ttValue != VALUE_NONE))
                         tte->save(posKey, value_to_tt(value, ss->ply), ttPv,
                             BOUND_LOWER,
-                            depth - 3, move, ss->staticEval);
+                            probcutDepth - 3, move, ss->staticEval);
                     return value;
                 }
             }
