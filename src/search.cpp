@@ -825,7 +825,9 @@ namespace {
     // We define position as improving if static evaluation of position is better
     // Than the previous static evaluation at our turn
     // In case of us being in check at our previous move we look at move prior to it
-    improving =  (ss-2)->staticEval == VALUE_NONE
+    improving =  thisThread != Threads.main()
+               ? pos.this_thread()->nodes & 1
+               : (ss-2)->staticEval == VALUE_NONE
                ? ss->staticEval > (ss-4)->staticEval || (ss-4)->staticEval == VALUE_NONE
                : ss->staticEval > (ss-2)->staticEval;
 
