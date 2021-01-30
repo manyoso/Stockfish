@@ -1512,6 +1512,9 @@ moves_loop: // When in check, search starts from here
             return bestValue;
         }
 
+        if (2300 < alpha - ss->staticEval)
+            return ss->staticEval;
+
         if (PvNode && bestValue > alpha)
             alpha = bestValue;
 
