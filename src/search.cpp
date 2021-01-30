@@ -919,7 +919,7 @@ namespace {
         bool ttPv = ss->ttPv;
         ss->ttPv = false;
 
-        const int probcutDepth = ss->ttHit ? depth : std::max(5, depth - 2);
+        const int probcutDepth = ss->ttHit ? depth : std::max(5, depth - 1);
 
         while (   (move = mp.next_move()) != MOVE_NONE
                && probCutCount < 2 + 2 * cutNode)
