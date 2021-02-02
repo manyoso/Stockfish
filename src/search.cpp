@@ -1381,12 +1381,12 @@ moves_loop: // When in check, search starts from here
     // If there is a move which produces search value greater than alpha we update stats of searched moves
     else if (bestMove)
         update_all_stats(pos, ss, bestMove, bestValue, beta, prevSq,
-                         quietsSearched, quietCount, capturesSearched, captureCount, newDepth+1);
+                         quietsSearched, quietCount, capturesSearched, captureCount, bestValue >= beta ? newDepth+1 : depth);
 
     // Bonus for prior countermove that caused the fail low
-    else if (   (newDepth+1 >= 3 || PvNode)
+    else if (   (bestValue >= beta ? newDepth+1 : depth >= 3 || PvNode)
              && !priorCapture)
-        update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, stat_bonus(newDepth+1));
+        update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, stat_bonus(bestValue >= beta ? newDepth+1 : depth));
 
     if (PvNode)
         bestValue = std::min(bestValue, maxValue);
