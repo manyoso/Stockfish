@@ -777,6 +777,8 @@ namespace {
 
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
+    bool isEvalDrawn = false;
+
     // Step 6. Static evaluation of the position
     if (ss->inCheck)
     {
@@ -793,8 +795,10 @@ namespace {
             ss->staticEval = eval = evaluate(pos);
 
         // Randomize draw evaluation
-        if (eval == VALUE_DRAW)
+        if (eval == VALUE_DRAW) {
+            isEvalDrawn = true;
             eval = value_draw(thisThread);
+        }
 
         // Can ttValue be used as a better position evaluation?
         if (    ttValue != VALUE_NONE
@@ -1191,6 +1195,10 @@ moves_loop: // When in check, search starts from here
           // Decrease reduction if ttMove has been singularly extended (~3 Elo)
           if (singularQuietLMR)
               r--;
+
+          // Increase for drawn OCB positions where beta is greater than draw
+          if (isEvalDrawn && pos.opposite_bishops() && beta >= VALUE_DRAW)
+              r++;
 
           if (captureOrPromotion)
           {
