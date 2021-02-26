@@ -829,6 +829,7 @@ namespace {
                ? ss->staticEval > (ss-4)->staticEval || (ss-4)->staticEval == VALUE_NONE
                : ss->staticEval > (ss-2)->staticEval;
 
+#if 0 // My shitty regression
     // Step 7. Futility pruning: child node (~50 Elo)
     if (   !PvNode
         &&  depth < 9
@@ -966,6 +967,7 @@ namespace {
         && depth >= 6
         && !ttMove)
         depth -= 2;
+#endif
 
 moves_loop: // When in check, search starts from here
 
@@ -1091,7 +1093,8 @@ moves_loop: // When in check, search starts from here
       // then that move is singular and should be extended. To verify this we do
       // a reduced search on all the other moves but the ttMove and if the
       // result is lower than ttValue minus a margin, then we will extend the ttMove.
-      if (    depth >= 7
+      if (    false
+          &&  depth >= 7
           &&  move == ttMove
           && !rootNode
           && !excludedMove // Avoid recursive singular search
@@ -1134,12 +1137,12 @@ moves_loop: // When in check, search starts from here
       }
 
       // Check extension (~2 Elo)
-      else if (    givesCheck
+      else if (    false && givesCheck
                && (pos.is_discovered_check_on_king(~us, move) || pos.see_ge(move)))
           extension = 1;
 
       // Last captures extension
-      else if (   PieceValue[EG][pos.captured_piece()] > PawnValueEg
+      else if (   false && PieceValue[EG][pos.captured_piece()] > PawnValueEg
                && pos.non_pawn_material() <= 2 * RookValueMg)
           extension = 1;
 
@@ -1161,7 +1164,8 @@ moves_loop: // When in check, search starts from here
 
       // Step 15. Reduced depth search (LMR, ~200 Elo). If the move fails high it will be
       // re-searched at full depth.
-      if (    depth >= 3
+      if (    false
+          && depth >= 3
           &&  moveCount > 1 + 2 * rootNode
           && (  !captureOrPromotion
               || moveCountPruning
